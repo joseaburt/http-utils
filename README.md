@@ -20,8 +20,9 @@ Http.register('LEGACY_API', {
   onUnauthorized(error) {
     console.log(error);
   },
-})
-.register('ANOTHER_API', {
+});
+
+Http.register('ANOTHER_API', {
   baseURL: 'http://another.company.com/api/v1',
   getToken: () return process.env.ACCESS_TOKEN ?? "",
   beforeRedirect(options, responseDetails) {
@@ -142,6 +143,24 @@ function createDownloadComponent(Component: ComponentType<DownloadComponentProps
     );
   };
 }
+```
+
+## UploadFileMethod
+
+`UploadFileMethod` is similar than `DownloadFileMethod`, both extends from some base class `ProgressiveFileMethod`. So use it like the same.
+
+### Similarities and Differences
+
+```ts
+// DownloadFileMethod
+abort(): void
+send(endpoint: string): Promise<AxiosResponse<Blob>> // 👈🏼 Check this
+subscribeToProgress(subscriber: ProgressSubscriber)
+
+// UploadFileMethod
+abort(): void
+send(endpoint: string, formData: FormData): Promise<AxiosResponse<T>> // 👈🏼 The difference is here, we need the `FormData` payload for uploading.
+subscribeToProgress(subscriber: ProgressSubscriber)
 ```
 
 ## Error Handling
