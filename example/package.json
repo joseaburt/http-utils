@@ -1,0 +1,22 @@
+{
+  "name": "nextjs-fundations-from-react-to-nextjs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "JoseAburto",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev"
+  },
+  "dependencies": {
+    "next": "^13.5.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.3.5",
+    "lodash": "^4.17.21",
+    "lodash-es": "4.17.21",
+    "@joseaburt/http-error": "^0.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "18.2.31"
+  }
+}
