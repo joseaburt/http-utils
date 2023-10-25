@@ -1361,11 +1361,6 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
-"@joseaburt/http-error@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.npmjs.org/@joseaburt/http-error/-/http-error-0.1.1.tgz#4b01aa57446a3552a432bddbc83a071fa02cde0c"
-  integrity sha512-6Eb5mF2fofD/YAHaOiclzQw2o3Y/Dv66Zsn3N1zP6LlTFB3Z6mraWubdnuno5jOPzckjS5Hh84Y00phshV0MRQ==
-
 "@jridgewell/gen-mapping@^0.3.0", "@jridgewell/gen-mapping@^0.3.2":
   version "0.3.3"
   resolved "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.3.tgz#7e02e6eb5df901aaedb08514203b096614024098"

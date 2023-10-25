@@ -1,36 +1,23 @@
-import { AxiosResponse } from 'axios';
-import { HttpClient } from '../client';
-import { Cancellable } from '../cancellable';
-import { DefaultExceptionHandler } from '../errors/error-handler';
+import { HttpError } from '../errors';
+import { BaseHttpMethod } from './base';
+import { AxiosInstance, AxiosResponse } from 'axios';
 
-export class DeleteMethod<TResponse = void> extends Cancellable {
+export class DeleteMethod<TResponse = void> extends BaseHttpMethod {
   protected async send(endpoint: string): Promise<AxiosResponse<TResponse>> {
     try {
-      return await HttpClient.getInstance().getPrivateInstance().delete<TResponse>(endpoint, { signal: this.ensureSignal() });
+      return await this.instance.delete<TResponse>(endpoint, { signal: this.ensureSignal() });
     } catch (error) {
-      throw DefaultExceptionHandler.new().catch(error);
+      throw HttpError.catch(error);
     }
   }
 
-  protected async sendWithoutToken(endpoint: string): Promise<AxiosResponse<TResponse>> {
-    try {
-      return await HttpClient.getInstance().getPublicInstance().delete<TResponse>(endpoint, { signal: this.ensureSignal() });
-    } catch (error) {
-      throw DefaultExceptionHandler.new().catch(error);
-    }
-  }
-
-  public static build(): DeleteMethodBuilder {
-    return new DeleteMethodBuilder();
+  public static build(instance: AxiosInstance): DeleteMethodBuilder {
+    return new DeleteMethodBuilder(instance);
   }
 }
 
 export class DeleteMethodBuilder extends DeleteMethod<void> {
   public send(endpoint: string): Promise<AxiosResponse<void>> {
-    return super.send(endpoint);
-  }
-
-  public sendWithoutToken(endpoint: string): Promise<AxiosResponse<void>> {
     return super.send(endpoint);
   }
 }

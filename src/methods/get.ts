@@ -1,37 +1,24 @@
-import { HttpClient } from '../client';
-import { Cancellable } from '../cancellable';
-import { DefaultExceptionHandler } from '../errors/error-handler';
+import { AxiosInstance } from 'axios';
+import { HttpError } from '../errors';
+import { BaseHttpMethod } from './base';
 
-export class GetMethod<TResponse> extends Cancellable {
+export class GetMethod<TResponse> extends BaseHttpMethod {
   protected async send(endpoint: string): Promise<TResponse> {
     try {
-      const response = await HttpClient.getInstance().getPrivateInstance().get<TResponse>(endpoint, { signal: this.ensureSignal() });
+      const response = await this.instance.get<TResponse>(endpoint, { signal: this.ensureSignal() });
       return response.data;
     } catch (error) {
-      throw DefaultExceptionHandler.new().catch(error);
+      throw HttpError.catch(error);
     }
   }
 
-  protected async sendWithoutToken(endpoint: string): Promise<TResponse> {
-    try {
-      const response = await HttpClient.getInstance().getPrivateInstance().get<TResponse>(endpoint, { signal: this.ensureSignal() });
-      return response.data;
-    } catch (error) {
-      throw DefaultExceptionHandler.new().catch(error);
-    }
-  }
-
-  public static build<TResponse>(): GetMethodBuilder<TResponse> {
-    return new GetMethodBuilder<TResponse>();
+  public static build<TResponse>(instance: AxiosInstance): GetMethodBuilder<TResponse> {
+    return new GetMethodBuilder<TResponse>(instance);
   }
 }
 
 class GetMethodBuilder<TResponse> extends GetMethod<TResponse> {
   public send(endpoint: string): Promise<TResponse> {
     return super.send(endpoint);
-  }
-
-  public sendWithoutToken(endpoint: string): Promise<TResponse> {
-    return super.sendWithoutToken(endpoint);
   }
 }

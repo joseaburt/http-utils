@@ -1,38 +1,28 @@
+import { HttpError } from '../errors';
 import axios, { AxiosInstance } from 'axios';
+import { ErrorInfo, HttpClientDefinition } from '../types';
 import { UnauthorizedError } from '../errors/UnauthorizedError';
-import { HttpClientDefinition, HttpClientType } from '../types';
 
-export class HttpClient {
-  private instances: Map<HttpClientType, AxiosInstance> = new Map();
-  private instancesConfigs: Map<HttpClientType, HttpClientDefinition> = new Map();
+export class HttpClient<InstanceType> {
+  private instances: Map<InstanceType, AxiosInstance> = new Map();
+  private instancesConfigs: Map<InstanceType, HttpClientDefinition> = new Map();
 
-  public async register(name: HttpClientType, options: HttpClientDefinition) {
-    if (this.instances.has(name)) return;
+  public register(name: InstanceType, options: HttpClientDefinition): Pick<HttpClient<InstanceType>, 'register'> {
     this.instancesConfigs.set(name, options);
     const newInstance = axios.create({
+      baseURL: options.baseURL,
       headers: options.headers,
       beforeRedirect: options.beforeRedirect,
-      baseURL: process.env.NEXT_PUBLIC_BASE_API,
     });
     this.instances.set(name, this.addTokenInterceptor(newInstance, options));
+    return this;
   }
 
-  public get(name: HttpClientType): AxiosInstance {
-    if (!this.instances.has(name)) throw new Error(`HttpClient ${name} not found`);
+  public getInstance(name: InstanceType): AxiosInstance {
+    if (!this.instances.has(name)) {
+      throw new Error(`HttpClient "${name}" not found. Register it by using "Http.register" or use one of the previous registered one: [${Array.from(this.instances.keys()).map(String)}]`);
+    }
     return this.instances.get(name)!;
-  }
-
-  public getInstance(name: HttpClientType): AxiosInstance {
-    if (!this.instances.has(name)) throw new Error(`HttpClient ${name} not found`);
-    return this.instances.get(name)!;
-  }
-
-  public getPrivateInstance(): AxiosInstance {
-    return this.getInstance('PRIVATE');
-  }
-
-  public getPublicInstance(): AxiosInstance {
-    return this.getInstance('PUBLIC');
   }
 
   // Internal Utils
@@ -68,11 +58,17 @@ export class HttpClient {
     return instance;
   }
 
-  private static instance: HttpClient;
+  public static parseError(error: any): ErrorInfo {
+    return HttpError.parse(error);
+  }
+
+  // Initialization
+
+  private static instance: HttpClient<any>;
 
   private constructor() {}
 
-  public static getInstance(): HttpClient {
+  public static getOrCreateInstance<InstanceType>(): HttpClient<InstanceType> {
     if (!HttpClient.instance) HttpClient.instance = new HttpClient();
     return HttpClient.instance;
   }

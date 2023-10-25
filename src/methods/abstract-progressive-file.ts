@@ -1,12 +1,12 @@
-import { AxiosProgressEvent } from 'axios';
-import { Cancellable } from '../cancellable';
+import { BaseHttpMethod } from './base';
 import { Optional, ProgressSubscriber } from '../types';
+import { AxiosInstance, AxiosProgressEvent } from 'axios';
 
-export abstract class ProgressiveFileMethod extends Cancellable {
+export abstract class ProgressiveFileMethod extends BaseHttpMethod {
   private subscriber: Optional<ProgressSubscriber>;
 
-  constructor() {
-    super();
+  constructor(instance: AxiosInstance) {
+    super(instance);
     this.onProgress = this.onProgress.bind(this);
   }
 

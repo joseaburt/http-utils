@@ -1,7 +1,6 @@
-import { HttpClient } from '../client';
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { DefaultExceptionHandler } from '../errors/error-handler';
+import { HttpError } from '../errors';
 import { ProgressiveFileMethod } from './abstract-progressive-file';
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export class UploadFileMethod<T = any> extends ProgressiveFileMethod {
   private getConfigs(): AxiosRequestConfig<Blob> {
@@ -16,37 +15,19 @@ export class UploadFileMethod<T = any> extends ProgressiveFileMethod {
 
   protected async send(endpoint: string, formData: FormData): Promise<AxiosResponse<T>> {
     try {
-      return HttpClient.getInstance()
-        .getPrivateInstance()
-        .post<T>(endpoint, formData, this.getConfigs())
-        .finally(() => this.setWasResolved());
+      return this.instance.post<T>(endpoint, formData, this.getConfigs()).finally(() => this.setWasResolved());
     } catch (error) {
-      throw DefaultExceptionHandler.new().catch(error);
+      throw HttpError.catch(error);
     }
   }
 
-  protected async sendWithoutToken(endpoint: string, formData: FormData): Promise<AxiosResponse<T>> {
-    try {
-      return HttpClient.getInstance()
-        .getPrivateInstance()
-        .post<T>(endpoint, formData, this.getConfigs())
-        .finally(() => this.setWasResolved());
-    } catch (error) {
-      throw DefaultExceptionHandler.new().catch(error);
-    }
-  }
-
-  public static build<T = any>(): UploadFileMethodBuilder<T> {
-    return new UploadFileMethodBuilder<T>();
+  public static build<T = any>(instance: AxiosInstance): UploadFileMethodBuilder<T> {
+    return new UploadFileMethodBuilder<T>(instance);
   }
 }
 
 class UploadFileMethodBuilder<T = any> extends UploadFileMethod<T> {
   public send(endpoint: string, formData: FormData): Promise<AxiosResponse<T>> {
     return super.send(endpoint, formData);
-  }
-
-  public sendWithoutToken(endpoint: string, formData: FormData): Promise<AxiosResponse<T>> {
-    return super.sendWithoutToken(endpoint, formData);
   }
 }

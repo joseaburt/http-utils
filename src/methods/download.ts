@@ -1,28 +1,13 @@
-import { HttpClient } from '../client';
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { DefaultExceptionHandler } from '../errors/error-handler';
+import { HttpError } from '../errors';
 import { ProgressiveFileMethod } from './abstract-progressive-file';
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export class DownloadFileMethod extends ProgressiveFileMethod {
   protected async send(endpoint: string): Promise<AxiosResponse<Blob>> {
     try {
-      return HttpClient.getInstance()
-        .getPrivateInstance()
-        .get<Blob>(endpoint, this.getConfigs())
-        .finally(() => this.setWasResolved());
+      return this.instance.get<Blob>(endpoint, this.getConfigs()).finally(() => this.setWasResolved());
     } catch (error) {
-      throw DefaultExceptionHandler.new().catch(error);
-    }
-  }
-
-  protected async sendWithoutToken(endpoint: string): Promise<AxiosResponse<Blob>> {
-    try {
-      return HttpClient.getInstance()
-        .getPublicInstance()
-        .get<Blob>(endpoint, this.getConfigs())
-        .finally(() => this.setWasResolved());
-    } catch (error) {
-      throw DefaultExceptionHandler.new().catch(error);
+      throw HttpError.catch(error);
     }
   }
 
@@ -34,17 +19,13 @@ export class DownloadFileMethod extends ProgressiveFileMethod {
     };
   }
 
-  public static build(): DownloadFileMethodBuilder {
-    return new DownloadFileMethodBuilder();
+  public static build(instance: AxiosInstance): DownloadFileMethodBuilder {
+    return new DownloadFileMethodBuilder(instance);
   }
 }
 
 class DownloadFileMethodBuilder extends DownloadFileMethod {
   public send(endpoint: string): Promise<AxiosResponse<Blob>> {
     return super.send(endpoint);
-  }
-
-  public sendWithoutToken(endpoint: string): Promise<AxiosResponse<Blob>> {
-    return super.sendWithoutToken(endpoint);
   }
 }

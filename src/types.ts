@@ -37,10 +37,6 @@ export type WithAbortResponse<TResponse> = {
   response: BackendResponse<TResponse>;
 };
 
-export interface ExceptionHandler<R = any> {
-  catch(error: Error): R;
-}
-
 export type ErrorPayload = {
   code: string;
   error: string;
@@ -58,8 +54,6 @@ export abstract class AbstractPaginableRepository extends Cancellable {
 
 // Client
 
-export type HttpClientType = 'PRIVATE' | 'PUBLIC';
-
 export type HttpClientDefinition = {
   baseURL?: string;
   getToken: () => string | undefined;
@@ -67,4 +61,19 @@ export type HttpClientDefinition = {
   onUnauthorized: (error: UnauthorizedError) => void;
   headers?: RawAxiosRequestHeaders | AxiosHeaders | Partial<HeadersDefaults>;
   beforeRedirect?: (options: Record<string, any>, responseDetails: { headers: Record<string, string> }) => void;
+};
+
+// Error
+export type ErrorInfo = {
+  context: any;
+  code: string;
+  status: number;
+  message: string;
+};
+
+export type CreateErrorOption = {
+  context?: any;
+  code: string;
+  status: number;
+  message: string;
 };
