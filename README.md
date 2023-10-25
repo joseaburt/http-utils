@@ -147,7 +147,7 @@ function createDownloadComponent(Component: ComponentType<DownloadComponentProps
 
 ## UploadFileMethod
 
-`UploadFileMethod` is similar than `DownloadFileMethod`, both extends from the base class `ProgressiveFileMethod`. So use it like the same.
+`UploadFileMethod` is similar than `DownloadFileMethod`, both extend from the base class `ProgressiveFileMethod`. So use it like the same.
 
 ### Similarities and Differences
 
