@@ -30,7 +30,7 @@ export class HttpClient<InstanceType> {
   protected addTokenInterceptor(instance: AxiosInstance, configs: HttpClientDefinition): AxiosInstance {
     const onFulfilled = (request: any) => {
       const token = configs.getToken();
-      if (token) request.headers['Authorization'] = 'Bearer ' + token;
+      if (token) request.headers['Authorization'] = token;
       return request;
     };
 
