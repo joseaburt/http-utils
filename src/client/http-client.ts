@@ -72,4 +72,8 @@ export class HttpClient<InstanceType> {
     if (!HttpClient.instance) HttpClient.instance = new HttpClient();
     return HttpClient.instance;
   }
+
+  public static getFreshInstance(): AxiosInstance {
+    return axios.create();
+  }
 }
